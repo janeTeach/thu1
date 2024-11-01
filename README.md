@@ -21,13 +21,7 @@
 <body>
     <h1>Bài Trắc Nghiệm</h1>
     <form id="quizForm">
-        <div class="question" id="question1">
-            <p>1. Đâu là thủ đô của Việt Nam?</p>
-            <img src="https://i.postimg.cc/SNhtxDHS/Untitled-01.png" alt="Hình minh họa" height="86" width="56">
-        </div>
-        <div class="question" id="question2">
-            <p>2. Giải phương trình $$\sqrt{a^2 + b^2} = c$$</p>
-        </div>
+        <div id="questionsContainer"></div>
         <button type="button" onclick="checkAnswers()">Nộp Bài</button>
     </form>
     <p id="result"></p>
@@ -38,6 +32,7 @@
                 question: "Đâu là thủ đô của Việt Nam?",
                 answers: ["TP. Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Cần Thơ"],
                 correct: "Hà Nội",
+                image: "https://via.placeholder.com/200"
             },
             {
                 question: "Giải phương trình $$\\sqrt{a^2 + b^2} = c$$",
@@ -54,9 +49,19 @@
         }
 
         function loadQuestions() {
+            shuffleArray(questions);
+            const questionsContainer = document.getElementById('questionsContainer');
             questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `question${index + 1}`;
+                questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+                if (q.image) {
+                    const img = document.createElement('img');
+                    img.src = q.image;
+                    questionDiv.appendChild(img);
+                }
                 shuffleArray(q.answers);
-                const questionDiv = document.getElementById(`question${index + 1}`);
                 q.answers.forEach(answer => {
                     const radioBtn = document.createElement('input');
                     radioBtn.type = 'radio';
@@ -66,12 +71,9 @@
                     questionDiv.appendChild(document.createTextNode(answer));
                     questionDiv.appendChild(document.createElement('br'));
                 });
-                if (q.image) {
-                    const img = document.createElement('img');
-                    img.src = q.image;
-                    questionDiv.appendChild(img);
-                }
+                questionsContainer.appendChild(questionDiv);
             });
+            MathJax.typeset();
         }
 
         function checkAnswers() {
@@ -95,7 +97,6 @@
                 }
             });
             document.getElementById('result').innerHTML = `Bạn trả lời đúng ${correctAnswers} trên ${questions.length} câu hỏi.`;
-            MathJax.typeset();
         }
 
         window.onload = loadQuestions;
